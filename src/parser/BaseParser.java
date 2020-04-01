@@ -1,3 +1,7 @@
+package parser;
+
+import parser.exceptions.ArrayOperationsException;
+
 /**
  * @author <a href="https://teleg.run/borisshapa">Boris Shaposhnikov</a>
  */
@@ -10,7 +14,6 @@ public class BaseParser {
     }
 
     protected void nextChar() {
-        // TODO: Check final symbol
         ch = source.hasNext() ? source.next() : '\0';
     }
 
@@ -32,6 +35,13 @@ public class BaseParser {
     protected void expect(final String value) {
         for (char c : value.toCharArray()) {
             expect(c);
+        }
+    }
+
+    protected void expectType(Object obj, Class<?> token) {
+        Class<?> objClass = obj.getClass();
+        if (!token.isAssignableFrom(objClass)) {
+            throw error("Expected expression type " + token.getName() + ", found " + objClass);
         }
     }
 

@@ -1,3 +1,7 @@
+package parser;
+
+import parser.exceptions.ArrayOperationsException;
+
 /**
  * @author <a href="https://teleg.run/borisshapa">Boris Shaposhnikov</a>
  */
@@ -6,7 +10,7 @@ public class StringSource implements ArrayOperationsSource {
     private int pos;
 
     public StringSource(final String data) {
-        this.data = data;
+        this.data = data + END;
     }
 
     @Override

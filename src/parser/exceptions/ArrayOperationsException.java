@@ -1,3 +1,5 @@
+package parser.exceptions;
+
 /**
  * @author <a href="https://teleg.run/borisshapa">Boris Shaposhnikov</a>
  */
