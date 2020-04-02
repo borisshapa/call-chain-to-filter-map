@@ -1,6 +1,6 @@
 package parser;
 
-import parser.exceptions.ArrayOperationsException;
+import exceptions.ArrayOperationsException;
 
 /**
  * @author <a href="https://teleg.run/borisshapa">Boris Shaposhnikov</a>

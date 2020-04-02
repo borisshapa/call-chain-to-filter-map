@@ -1,13 +1,12 @@
 package parser;
 
-import operators.BooleanOperator;
-import operators.comparison.AbstractComparisonOperator;
-import operators.comparison.Greater;
-import operators.comparison.Less;
-import operators.logic.AbstractLogicOperator;
-import operators.logic.And;
-import operators.logic.Or;
-import polynomial.Polynomial;
+import expression.Expression;
+import expression.boolean_operators.BooleanOperator;
+import expression.boolean_operators.comparison.Greater;
+import expression.boolean_operators.comparison.Less;
+import expression.boolean_operators.logic.And;
+import expression.boolean_operators.logic.Or;
+import expression.polynomial.Polynomial;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,25 +24,24 @@ public class ArrayOperations {
             '*', Polynomial::multiply
     );
 
-    private static final Map<Character, BiFunction<BooleanOperator, BooleanOperator,
-            AbstractLogicOperator>> LOGIC_OPERATORS = Map.of(
+    private static final Map<Character, BinaryOperator<BooleanOperator>> LOGIC_OPERATORS = Map.of(
             '&', And::new,
             '|', Or::new,
-            '=', operators.logic.Equal::new
+            '=', expression.boolean_operators.logic.Equal::new
     );
 
     private static final Map<Character, BiFunction<Polynomial, Polynomial,
-            AbstractComparisonOperator>> COMPARISON_OPERATORS = Map.of(
-            '=', operators.comparison.Equal::new,
+            BooleanOperator>> COMPARISON_OPERATORS = Map.of(
+            '=', expression.boolean_operators.comparison.Equal::new,
             '<', Less::new,
             '>', Greater::new
     );
 
-    public static Object parse(final String source) {
+    public static List<Expression> parse(final String source) {
         return parse(new StringSource(source));
     }
 
-    public static Object parse(ArrayOperationsSource source) {
+    public static List<Expression> parse(ArrayOperationsSource source) {
         return new ArrayOperationsParser(source).parseArrayOperations();
     }
 
@@ -57,8 +55,8 @@ public class ArrayOperations {
          * array-operations
          *      call-chain
          */
-        public Object parseArrayOperations() {
-            final Object result = parseCallChain();
+        public List<Expression> parseArrayOperations() {
+            final List<Expression> result = parseCallChain();
             if (test(ArrayOperationsSource.END)) {
                 return result;
             }
@@ -70,8 +68,8 @@ public class ArrayOperations {
          *      call
          *      call '%>%' call-chain
          */
-        private List<Object> parseCallChain() {
-            List<Object> array = new ArrayList<>();
+        private List<Expression> parseCallChain() {
+            List<Expression> array = new ArrayList<>();
             array.add(parseCall());
             while (test('%')) {
                 expect(">%");
@@ -85,8 +83,8 @@ public class ArrayOperations {
          *      map-call
          *      filter-call
          */
-        private Object parseCall() {
-            Object result;
+        private Expression parseCall() {
+            Expression result;
             skipWhitespace();
             if (test('f')) {
                 expect("ilter{");
@@ -110,9 +108,9 @@ public class ArrayOperations {
          *      constant-expression
          *      binary-expression
          */
-        private Object parseExpression() {
+        private Expression parseExpression() {
             skipWhitespace();
-            Object result;
+            Expression result;
             if (test('e')) {
                 expect("lement");
                 result = new Polynomial(1, 1);
@@ -138,13 +136,13 @@ public class ArrayOperations {
          * binary-expression
          *      '(' expression operation expression ')'
          */
-        private Object parseBinaryExpression() {
+        private Expression parseBinaryExpression() {
             expect('(');
-            Object leftOperand = parseExpression();
+            Expression leftOperand = parseExpression();
             char operator = ch;
             nextChar();
-            Object rightOperand = parseExpression();
-            Object result;
+            Expression rightOperand = parseExpression();
+            Expression result;
             if (leftOperand instanceof Polynomial && rightOperand instanceof Polynomial) {
                 Polynomial polynomial1 = (Polynomial) leftOperand;
                 Polynomial polynomial2 = (Polynomial) rightOperand;
@@ -184,7 +182,7 @@ public class ArrayOperations {
          *      number
          *      '-' number
          */
-        private Object parseConstantExpression() {
+        private Polynomial parseConstantExpression() {
             final StringBuilder sb = new StringBuilder();
             if (test('-')) {
                 sb.append('-');

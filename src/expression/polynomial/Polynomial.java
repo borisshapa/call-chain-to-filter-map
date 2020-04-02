@@ -1,6 +1,8 @@
-package polynomial;
+package expression.polynomial;
 
-public class Polynomial {
+import expression.Expression;
+
+public class Polynomial implements Expression {
     static final String VARIABLE_NAME = "element";
 
     private int[] coefficients;
@@ -8,7 +10,7 @@ public class Polynomial {
 
     public Polynomial(int coefficient, int degree) {
         if (degree < 0) {
-            throw new IllegalArgumentException("An integer non-negative degree of polynomial was expected");
+            throw new IllegalArgumentException("An integer non-negative degree of operations.polynomial was expected");
         }
         this.coefficients = new int[degree + 1];
         this.coefficients[degree] = coefficient;
@@ -61,6 +63,33 @@ public class Polynomial {
         return result;
     }
 
+    public Polynomial getConstantTerm() {
+        return new Polynomial(coefficients[0], 0);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+
+        if (!(obj instanceof Polynomial)) {
+            return false;
+        }
+
+        Polynomial polynomial = (Polynomial) obj;
+        if (this.degree != polynomial.degree) {
+            return false;
+        }
+        for (int i = 0; i <= this.degree; i++) {
+            if (this.coefficients[i] != polynomial.coefficients[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    @Override
     public Polynomial compose(Polynomial polynomial) {
         Polynomial result = new Polynomial(0, 0);
         for (int i = this.degree; i >= 0; i--) {
@@ -72,8 +101,11 @@ public class Polynomial {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        int openingBrackets = degree;
+
         for (int i = degree; i >= 0; i--) {
             if (coefficients[i] == 0) {
+                openingBrackets--;
                 continue;
             }
             if (i != degree) {
@@ -88,18 +120,23 @@ public class Polynomial {
                 if (i == 0) {
                     sb.append(coefficientAbs);
                 } else {
+                    sb.append("(".repeat(i - 1));
                     sb.append(VARIABLE_NAME);
-                    sb.append(("*" + VARIABLE_NAME).repeat(i - 1));
+                    sb.append(String.format("*%s)", VARIABLE_NAME).repeat(i - 1));
                 }
             } else {
+                sb.append("(".repeat(i));
                 sb.append(coefficientAbs);
-                sb.append(("*" + VARIABLE_NAME).repeat(i));
+                sb.append(String.format("*%s)", VARIABLE_NAME).repeat(i));
+            }
+            if (openingBrackets < degree) {
+                sb.append(")");
             }
         }
         if (sb.toString().isEmpty()) {
             sb.append(0);
         }
-        return sb.toString();
+        return "(".repeat(openingBrackets) + sb.toString();
     }
 
     public static void main(String[] args) {
