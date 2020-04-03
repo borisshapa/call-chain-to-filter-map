@@ -1,16 +1,32 @@
 package expression.boolean_operators.comparison;
 
+import expression.Expression;
 import expression.boolean_operators.BooleanOperator;
 import expression.polynomial.Polynomial;
+import set.RealNumbersSet;
+import set.Segment;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Equal extends ComparisonOperator {
-    private final static Polynomial ONE = new Polynomial(1, 0);
-    private final static  Polynomial ZERO = new Polynomial(0, 0);
+    @Override
+    public RealNumbersSet getValuesSet() {
+        Polynomial diff = ((Polynomial) arg1).subtract((Polynomial) arg2);
+        List<Double> roots = diff.getRoots();
+        return new RealNumbersSet(roots
+                .stream()
+                .filter(ComparisonOperator::isInteger)
+                .map(Segment::new).collect(Collectors.toList()));
 
-    public final static BooleanOperator TRUE = new Equal(ZERO, ZERO);
-    public final static BooleanOperator FALSE = new Equal(ONE, ZERO);
+    }
 
     public Equal(Polynomial arg1, Polynomial arg2) {
         super(arg1, arg2, "=");
+    }
+
+    @Override
+    public Expression compose(Polynomial polynomial) {
+        return new Equal(((Polynomial) arg1).compose(polynomial), ((Polynomial) arg2).compose(polynomial));
     }
 }

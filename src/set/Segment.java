@@ -1,7 +1,5 @@
 package set;
 
-import set.bound.Bound;
-
 import java.util.function.BinaryOperator;
 import java.util.function.Supplier;
 
@@ -16,6 +14,22 @@ public class Segment {
         if (lowerBound.compareTo(upperBound) > 0) {
             throw new IllegalArgumentException("The lower boundary of the segment cannot be to the right of the upper");
         }
+    }
+
+    public Segment(Double lowerBound, Double upperBound) {
+        this(new Bound(lowerBound), new Bound(upperBound));
+    }
+
+    public Segment(Double lowerBound, Bound upperBound) {
+        this(new Bound(lowerBound), upperBound);
+    }
+
+    public Segment(Bound lowerBound, Double upperBound) {
+        this(lowerBound, new Bound(upperBound));
+    }
+
+    public Segment(Double point) {
+        this(new Bound(point), new Bound(point));
     }
 
     public Bound getLowerBound() {
@@ -88,8 +102,8 @@ public class Segment {
             return null;
         }
 
-        Bound resultLB = lowerBound;
-        Bound resultUB = upperBound;
+        Bound resultLB = new Bound(lowerBound);
+        Bound resultUB = new Bound(upperBound);
         if (lowerBound.compareTo(segmentUB) == 0) {
             return docking(lowerBound, segmentUB, inclusionFactor, () -> new Segment(lowerBound, segmentUB));
         }

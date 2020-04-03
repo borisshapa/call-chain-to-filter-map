@@ -1,41 +1,63 @@
 package set;
 
-import set.bound.Bound;
-import set.bound.Infinity;
-import set.bound.Point;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class RealNumbersSet {
-    private final static Segment INF = new Segment(new Infinity(), new Infinity());
+    private final static Segment INF = new Segment(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY);
 
     private List<Segment> segments;
 
     public RealNumbersSet(Segment segment) {
-        segments = new ArrayList<>(List.of(segment));
+        this();
+        add(segment);
+    }
+
+    public RealNumbersSet(Double point) {
+        this(new Segment(point, point));
+    }
+
+    public RealNumbersSet(Double bound1, Double bound2) {
+        this(new Bound(bound1), new Bound(bound2));
     }
 
     public RealNumbersSet() {
         segments = new ArrayList<>();
     }
 
+    public RealNumbersSet(Bound bound1, Bound bound2) {
+        this(new Segment(bound1, bound2));
+    }
+
     public RealNumbersSet(List<Segment> segments) {
         this.segments = segments;
     }
 
+    public List<Segment> getSegments() {
+        return segments;
+    }
+
     private void add(Segment segment) {
-        segments.add(segment);
+        if (segment.getLowerBound().compareTo(segment.getUpperBound()) < 0
+                || (segment.getLowerBound().compareTo(segment.getUpperBound()) == 0
+                && segment.getLowerBound().inclusive && segment.getUpperBound().inclusive)) {
+            segments.add(segment);
+        }
     }
 
     private Segment segmentJoin(Segment accumulatedSegment, Segment addedSegment, RealNumbersSet generatedSet) {
+        if (addedSegment == null) {
+            return accumulatedSegment;
+        }
         if (accumulatedSegment == null) {
             return addedSegment;
-        } else if (accumulatedSegment.union(addedSegment) == null) {
+        }
+        Segment union = accumulatedSegment.union(addedSegment);
+        if (union == null) {
             generatedSet.add(accumulatedSegment);
             return addedSegment;
         }
-        return accumulatedSegment;
+        return union;
     }
 
     public RealNumbersSet union(RealNumbersSet set) {
@@ -107,11 +129,5 @@ public class RealNumbersSet {
         }
         sb.append(" }");
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-        Segment segment1 = new Segment(new Point(7, true), new Point(7, true));
-        Segment segment2 = new Segment(new Point(7, false), new Point(9, false));
-
     }
 }

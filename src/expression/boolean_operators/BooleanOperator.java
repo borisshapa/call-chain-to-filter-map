@@ -1,12 +1,19 @@
 package expression.boolean_operators;
 
 import expression.Expression;
-import expression.boolean_operators.comparison.Equal;
+import expression.boolean_operators.logic.LogicOperator;
 import expression.polynomial.Polynomial;
+import set.RealNumbersSet;
 
-public class BooleanOperator implements Expression {
-    private Expression arg1, arg2;
-    String operator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+public abstract class BooleanOperator implements Expression {
+    protected Expression arg1;
+    protected Expression arg2;
+    private String operator;
 
     public BooleanOperator(Expression arg1, Expression arg2, String operator) {
         this.arg1 = arg1;
@@ -14,13 +21,10 @@ public class BooleanOperator implements Expression {
         this.operator = operator;
     }
 
-    @Override
-    public String toString() {
-        return "(" + arg1.toString() + operator + arg2.toString() + ")";
-    }
+    public abstract RealNumbersSet getValuesSet();
 
     @Override
-    public Expression compose(Polynomial polynomial) {
-        return new BooleanOperator(arg1.compose(polynomial), arg2.compose(polynomial), operator);
+    public String toString() {
+        return arg1.toString() + operator + arg2.toString();
     }
 }

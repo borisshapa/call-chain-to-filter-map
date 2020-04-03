@@ -26,8 +26,7 @@ public class ArrayOperations {
 
     private static final Map<Character, BinaryOperator<BooleanOperator>> LOGIC_OPERATORS = Map.of(
             '&', And::new,
-            '|', Or::new,
-            '=', expression.boolean_operators.logic.Equal::new
+            '|', Or::new
     );
 
     private static final Map<Character, BiFunction<Polynomial, Polynomial,
