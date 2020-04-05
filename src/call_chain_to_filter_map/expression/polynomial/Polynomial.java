@@ -127,14 +127,6 @@ public class Polynomial implements Expression {
         return result;
     }
 
-    private double polynom(int n, double x, double[] k) {
-        double s = 1;
-        for (int i = n - 1; i >= 0; i--) {
-            s = s * x + k[i];
-        }
-        return s;
-    }
-
     /**
      * @return the coefficient before the element in the degree passed.
      */
