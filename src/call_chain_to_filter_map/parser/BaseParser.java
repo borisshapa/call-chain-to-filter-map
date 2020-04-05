@@ -100,7 +100,9 @@ public class BaseParser {
      * @param message error information
      * @return {@link UnsupportedTypeException}
      */
-    protected UnsupportedTypeException typeError(final String message) { return source.typeError(message); }
+    protected UnsupportedTypeException typeError(final String message) {
+        return source.typeError(message);
+    }
 
     /**
      * Checks if the current character is in the specified range.
